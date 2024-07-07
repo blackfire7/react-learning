@@ -6,11 +6,27 @@ import {CoreConcept} from "./components/CoreConcepts/CoreConcepts";
 import TabButton from "./components/TabButton";
 
 function App() {
-    const [selectedTopic, setSelectedTopic] = useState('components');
+    const [selectedTopic, setSelectedTopic] = useState();
+
     function handleSelect(selectedButton) {
         setSelectedTopic(selectedButton);
         // console.log(selectedTopic);
     }
+
+    let tabContent = <p>Please select a topic.</p>;
+
+    if (selectedTopic) {
+        tabContent = (
+            <div id="tab-content">
+                <h3>{EXAMPLES[selectedTopic].title}</h3>
+                <p>{EXAMPLES[selectedTopic].description}</p>
+                <pre>
+                            <code>{EXAMPLES[selectedTopic].code}</code>
+                        </pre>
+            </div>
+        );
+    }
+
 
     return (
         <div>
@@ -39,13 +55,36 @@ function App() {
                         <TabButton onSelect={() => handleSelect('props')}>Props</TabButton>
                         <TabButton onSelect={() => handleSelect('state')}>State</TabButton>
                     </menu>
-                    <div id="tab-content">
-                        <h3>{EXAMPLES[selectedTopic].title}</h3>
-                        <p>{EXAMPLES[selectedTopic].description}</p>
-                        <pre>
-                            <code>{EXAMPLES[selectedTopic].code}</code>
-                        </pre>
-                    </div>
+
+                    {/*3 different ways to show content conditionally*/}
+
+
+                    {/*1.*/}
+
+                    {/*{selectedTopic ? (<div id="tab-content">*/}
+                    {/*    <h3>{EXAMPLES[selectedTopic].title}</h3>*/}
+                    {/*    <p>{EXAMPLES[selectedTopic].description}</p>*/}
+                    {/*    <pre>*/}
+                    {/*        <code>{EXAMPLES[selectedTopic].code}</code>*/}
+                    {/*    </pre>*/}
+                    {/*</div>) : <p>Please select a topic.</p>}*/}
+
+
+                    {/*2.*/}
+
+                    {/*{!selectedTopic && <p>Please select a topic.</p>}*/}
+                    {/*{selectedTopic && (<div id="tab-content">*/}
+                    {/*    <h3>{EXAMPLES[selectedTopic].title}</h3>*/}
+                    {/*    <p>{EXAMPLES[selectedTopic].description}</p>*/}
+                    {/*    <pre>*/}
+                    {/*        <code>{EXAMPLES[selectedTopic].code}</code>*/}
+                    {/*    </pre>*/}
+                    {/*</div>)}*/}
+
+
+                    {/*3.*/}
+
+                    {tabContent}
                 </section>
             </main>
         </div>
