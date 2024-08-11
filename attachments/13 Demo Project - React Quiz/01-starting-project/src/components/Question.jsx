@@ -9,13 +9,13 @@ export default function Question({index, onSelectAnswer, onSkipAnswer}) {
 
     function handleSelectAnswer(answer) {
         setAnswer({
-            selected: answer,
+            selectedAnswer: answer,
             isCorrect: null
         })
 
         setTimeout(() => {
             setAnswer({
-                selected: answer,
+                selectedAnswer: answer,
                 isCorrect: QUESTIONS[index].answers[0] === answer
             })
 
@@ -28,10 +28,8 @@ export default function Question({index, onSelectAnswer, onSkipAnswer}) {
     let answerState = '';
 
     if (answer.selectedAnswer && answer.isCorrect !== null) {
-        console.log('---------')
         answerState = answer.isCorrect ? 'correct' : 'wrong'
     } else if (answer.selectedAnswer) {
-        console.log('====')
         answerState = 'answered';
     }
 
