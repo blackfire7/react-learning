@@ -1,20 +1,37 @@
-import {useRef, useState, useCallback} from 'react';
+import {useRef, useState, useCallback, useEffect} from 'react';
 
 import Places from './components/Places.jsx';
 import Modal from './components/Modal.jsx';
 import DeleteConfirmation from './components/DeleteConfirmation.jsx';
 import logoImg from './assets/logo.png';
 import AvailablePlaces from './components/AvailablePlaces.jsx';
-import {updateUserPlaces} from "./http.js";
+import {fetchAvailablePlaces, fetchUserPlaces, updateUserPlaces} from "./http.js";
 import ErrorMessage from './components/Error.jsx';
 
 function App() {
     const selectedPlace = useRef();
 
     const [userPlaces, setUserPlaces] = useState([]);
+    const [isFetching, setIsFetching] = useState(false);
+    const [error, setError] = useState();
     const [errorUpdatingPlaces, setErrorUpdatingPlaces] = useState();
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
+
+    useEffect(() => {
+        async function fetchPlaces() {
+            setIsFetching(true);
+            try {
+                const places = await fetchUserPlaces();
+                setUserPlaces(places);
+            } catch (error) {
+                setError({message: error.message || 'Failed to fetch user places'});
+            }
+            setIsFetching(false);
+        }
+
+        fetchPlaces();
+    }, []);
 
     function handleStartRemovePlace(place) {
         setModalIsOpen(true);
@@ -70,7 +87,7 @@ function App() {
 
             <Modal open={errorUpdatingPlaces} onClose={handleError}>
                 {errorUpdatingPlaces && <ErrorMessage title='An error occurred!' message={errorUpdatingPlaces.message}
-                               onConfirm={handleError}/>}
+                                                      onConfirm={handleError}/>}
             </Modal>
 
             <Modal open={modalIsOpen} onClose={handleStopRemovePlace}>
@@ -89,12 +106,16 @@ function App() {
                 </p>
             </header>
             <main>
-                <Places
+                {error && <ErrorMessage title="An error occurred!" message={error.message}></ErrorMessage>}
+
+                {!error && <Places
                     title="I'd like to visit ..."
                     fallbackText="Select the places you would like to visit below."
+                    isLoading={isFetching}
+                    loadingText="Fetching your places..."
                     places={userPlaces}
                     onSelectPlace={handleStartRemovePlace}
-                />
+                />}
 
                 <AvailablePlaces onSelectPlace={handleSelectPlace}/>
             </main>
